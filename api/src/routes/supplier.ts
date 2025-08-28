@@ -97,6 +97,27 @@
  *         description: Supplier deleted successfully
  *       404:
  *         description: Supplier not found
+ *
+ * /api/suppliers/name/{name}:
+ *   get:
+ *     summary: Get suppliers by (partial) name match (case-insensitive)
+ *     tags: [Suppliers]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Supplier name or partial name to search for
+ *     responses:
+ *       200:
+ *         description: List of suppliers matching the name
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Supplier'
  */
 
 import express from 'express';
@@ -117,6 +138,18 @@ router.post('/', (req, res) => {
 // Get all suppliers
 router.get('/', (req, res) => {
     res.json(suppliers);
+});
+
+// Get suppliers by name (case-insensitive, partial match)
+// Java developer note: this function accepts a path parameter `name` and returns
+// a list of Supplier objects whose `name` property contains the provided value.
+// Input: req.params.name (string)
+// Output: 200 JSON array of Supplier
+// Error modes: none (empty array returned if no matches)
+router.get('/name/:name', (req, res) => {
+    const query = (req.params.name || '').toLowerCase();
+    const matches = suppliers.filter(s => s.name.toLowerCase().includes(query));
+    res.json(matches);
 });
 
 // Get a supplier by ID
@@ -150,5 +183,7 @@ router.delete('/:id', (req, res) => {
         res.status(404).send('Supplier not found');
     }
 });
+
+
 
 export default router;
