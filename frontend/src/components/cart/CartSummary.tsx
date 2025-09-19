@@ -3,15 +3,16 @@ import { useTheme } from '../../context/ThemeContext';
 import { useState } from 'react';
 
 export default function CartSummary() {
-  const { getTotalPrice } = useCart();
+  const { getTotalPrice, getTaxAmount } = useCart();
   const { darkMode } = useTheme();
   const [couponCode, setCouponCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
 
   const subtotal = getTotalPrice();
+  const taxAmount = getTaxAmount();
   const discountAmount = subtotal * appliedDiscount;
   const shipping = 10; // Fixed shipping cost
-  const grandTotal = subtotal - discountAmount + shipping;
+  const grandTotal = subtotal - discountAmount + taxAmount + shipping;
 
   const handleApplyCoupon = () => {
     // Simple coupon logic - in real app this would be validated against backend
@@ -45,6 +46,11 @@ export default function CartSummary() {
             <span>-${discountAmount.toFixed(2)}</span>
           </div>
         )}
+        
+        <div className={`flex justify-between ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors`}>
+          <span>Tax (7%)</span>
+          <span>${taxAmount.toFixed(2)}</span>
+        </div>
         
         <div className={`flex justify-between ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors`}>
           <span>Shipping</span>

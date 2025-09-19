@@ -70,6 +70,15 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }, 0);
   };
 
+  const getTaxAmount = () => {
+    const subtotal = getTotalPrice();
+    return subtotal * 0.07; // 7% tax rate
+  };
+
+  const getTotalWithTax = () => {
+    return getTotalPrice() + getTaxAmount();
+  };
+
   const value: CartContextType = {
     items,
     addToCart,
@@ -78,6 +87,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     clearCart,
     getTotalItems,
     getTotalPrice,
+    getTaxAmount,
+    getTotalWithTax,
   };
 
   return (
