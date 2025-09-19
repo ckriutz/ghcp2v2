@@ -66,10 +66,65 @@ erDiagram
    # Build API and Frontend
    npm install && npm run build
    ```
-3. Start the application:
+-3. Start the application:
    ```bash
    npm run dev
    ```
+
+Run in Docker / Containers
+--------------------------
+
+If you'd prefer to run the whole project inside containers (recommended for demos or consistent environments), this repo includes Dockerfiles and a `docker-compose.yml` at the project root. The API defaults to port 3000 and the frontend to 5137 when run with the compose file.
+
+PowerShell-friendly quick start (build and run):
+
+```powershell
+# build images and start containers in the background
+docker-compose up --build -d
+
+# follow logs for both services
+docker-compose logs -f
+
+# stop and remove containers, networks and volumes created by compose
+docker-compose down
+```
+
+If you prefer to run containers manually (one-off):
+
+```powershell
+# build the images (from repo root)
+docker build -f api/Dockerfile -t octocat-api:local ./api
+docker build -f frontend/Dockerfile -t octocat-frontend:local ./frontend
+
+# run the API (map port 3000)
+docker run --rm -p 3000:3000 --name octocat-api octocat-api:local
+
+# in another shell, run the frontend (map port 5137)
+docker run --rm -p 5137:5137 --name octocat-frontend octocat-frontend:local
+```
+
+Notes and tips
+- The compose setup maps ports so you can open the frontend in your browser at http://localhost:5137 and the API at http://localhost:3000 by default.
+- On Windows, run PowerShell as Administrator if you run into permission or port binding errors.
+- If you need to pass environment variables (for example a different API URL or a production build flag), create a `.env` file next to `docker-compose.yml` or pass them inline with `docker-compose` (see `docker-compose --help`).
+- To rebuild just one service with compose without affecting others:
+
+```powershell
+docker-compose build api
+docker-compose up -d api
+```
+
+- For logs of a single service:
+
+```powershell
+docker-compose logs -f frontend
+```
+
+- If you want a clean slate (remove containers and volumes):
+
+```powershell
+docker-compose down --volumes --remove-orphans
+```
 
 Or use the VS Code tasks:
 - `Cmd/Ctrl + Shift + P` -> `Run Task` -> `Build All`
